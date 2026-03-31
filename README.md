@@ -1,8 +1,8 @@
 # 悦居物业报修管理系统
 
 全栈物业报修与工单管理：Spring Boot 后端 + Vue 3 前端。
-## 后端仓库
-- Spring Boot 后端：https://github.com/jike456/yueju-property-repair
+## 前端仓库
+- Spring Boot 后端：https://github.com/jike456/yueju-property-repair-frontend
 ## 技术栈
 
 - **后端**：Spring Boot 3、Java 17、Spring Security、JWT、MyBatis、PageHelper、MySQL  
