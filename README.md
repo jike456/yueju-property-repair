@@ -21,27 +21,8 @@ mvn spring-boot:run
 
 4. 接口文档见 [`docs/API接口文档.md`](docs/API接口文档.md)。
 
-## 上传到 GitHub（作品集）
 
-1. **切勿提交**真实数据库密码、JWT 密钥、内网地址。本仓库已用环境变量 + 可选 `application-local.properties` 处理；若你曾在旧版本中提交过密钥，请在数据库 **改密码**、并 **更换 JWT secret**。  
-2. 在项目根目录初始化并推送：
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: 悦居物业报修系统后端"
-```
-
-3. 在 GitHub 新建 **空仓库**（不要勾选添加 README），按页面提示添加远程并推送：
-
-```bash
-git remote add origin https://github.com/你的用户名/仓库名.git
-git branch -M main
-git push -u origin main
-```
-
-4. 在仓库 **About** 里可填写项目简介，并勾选 **Topics**，例如：`spring-boot`、`vue`、`fullstack`、`portfolio`。
 
 ## 许可证
 
-按需补充（如 MIT）；若仅作作品集展示，可注明「仅供学习展示」。
+「仅供学习展示」。
