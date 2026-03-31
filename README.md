@@ -1,6 +1,6 @@
 # 悦居物业报修管理系统
 
-全栈物业报修与工单管理：Spring Boot 后端 + Vue 3 前端（https://github.com/jike456/yueju-property-repair-frontend）。
+全栈物业报修与工单管理：Spring Boot 后端 + Vue 3 前端(https://github.com/jike456/yueju-property-repair-frontend)。
 
 ## 技术栈
 
