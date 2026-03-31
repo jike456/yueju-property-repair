@@ -1,0 +1,10 @@
+# 复制本文件为 application-local.properties（该文件已被 .gitignore 忽略）
+# 用于本地开发，覆盖 application.properties 中的占位配置
+
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/yueju_property?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+spring.datasource.username=root
+spring.datasource.password=你的数据库密码
+
+yueju.jwt.secret=请使用至少32字符的随机字符串作为JWT密钥
+
+file.upload.path=请改为本机绝对路径，例如 /home/you/project/uploads

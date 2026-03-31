@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.NotificationMapper">
+
+    <resultMap id="NotificationResultMap" type="com.example.hello.entity.Notification">
+        <id column="id" property="id"/>
+        <result column="receiver_id" property="receiverId"/>
+        <result column="sender_id" property="senderId"/>
+        <result column="type" property="type"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="data" property="data"/>
+        <result column="is_read" property="isRead"/>
+        <result column="create_time" property="createTime"/>
+        <result column="read_time" property="readTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, receiver_id, sender_id, type, title, content, data, is_read, create_time, read_time
+    </sql>
+
+    <insert id="insert" parameterType="com.example.hello.entity.Notification" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO notification (receiver_id, sender_id, type, title, content, data, is_read, create_time, read_time)
+        VALUES (#{receiverId}, #{senderId}, #{type}, #{title}, #{content}, #{data}, #{isRead}, #{createTime}, #{readTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.hello.entity.Notification">
+        UPDATE notification
+        <set>
+            <if test="isRead != null">is_read = #{isRead},</if>
+            <if test="readTime != null">read_time = #{readTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="NotificationResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM notification WHERE id = #{id}
+    </select>
+
+    <select id="selectByReceiverId" resultMap="NotificationResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM notification
+        WHERE receiver_id = #{receiverId}
+        <if test="isRead != null">AND is_read = #{isRead}</if>
+        ORDER BY create_time DESC
+    </select>
+
+    <update id="updateReadByReceiverId">
+        UPDATE notification
+        SET is_read = 1, read_time = NOW()
+        WHERE receiver_id = #{receiverId} AND is_read = 0
+    </update>
+
+    <delete id="deleteByReceiverOrSender">
+        DELETE FROM notification WHERE receiver_id = #{userId} OR sender_id = #{userId}
+    </delete>
+</mapper>

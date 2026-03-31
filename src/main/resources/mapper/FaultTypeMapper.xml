@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.FaultTypeMapper">
+
+    <resultMap id="FaultTypeResultMap" type="com.example.hello.entity.FaultType">
+        <id column="id" property="id"/>
+        <result column="type_name" property="typeName"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="level" property="level"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, type_name, parent_id, level, sort_order, status, create_time
+    </sql>
+
+    <select id="selectByParentId" resultMap="FaultTypeResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fault_type
+        WHERE parent_id = #{parentId}
+          AND status = 1
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="selectAllEnabled" resultMap="FaultTypeResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fault_type
+        WHERE status = 1
+        ORDER BY parent_id ASC, sort_order ASC, id ASC
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="FaultTypeResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM fault_type
+        WHERE id = #{id}
+    </select>
+</mapper>

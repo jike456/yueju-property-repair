@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.OrderProcessMapper">
+
+    <resultMap id="OrderProcessResultMap" type="com.example.hello.entity.OrderProcess">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="repairman_id" property="repairmanId"/>
+        <result column="assigner_id" property="assignerId"/>
+        <result column="assign_time" property="assignTime"/>
+        <result column="accept_time" property="acceptTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="process_note" property="processNote"/>
+        <result column="process_images" property="processImages"/>
+        <result column="material_used" property="materialUsed"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_id, repairman_id, assigner_id, assign_time, accept_time,
+        start_time, end_time, process_note, process_images, material_used, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.example.hello.entity.OrderProcess" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO order_process
+        (order_id, repairman_id, assigner_id, assign_time, accept_time, start_time, end_time,
+         process_note, process_images, material_used, create_time)
+        VALUES
+        (#{orderId}, #{repairmanId}, #{assignerId}, #{assignTime}, #{acceptTime}, #{startTime}, #{endTime},
+         #{processNote}, #{processImages}, #{materialUsed}, #{createTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.hello.entity.OrderProcess">
+        UPDATE order_process
+        <set>
+            <if test="repairmanId != null">repairman_id = #{repairmanId},</if>
+            <if test="assignerId != null">assigner_id = #{assignerId},</if>
+            <if test="assignTime != null">assign_time = #{assignTime},</if>
+            <if test="acceptTime != null">accept_time = #{acceptTime},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="processNote != null">process_note = #{processNote},</if>
+            <if test="processImages != null">process_images = #{processImages},</if>
+            <if test="materialUsed != null">material_used = #{materialUsed},</if>
+        </set>
+        WHERE order_id = #{orderId}
+    </update>
+
+    <select id="selectByOrderId" resultMap="OrderProcessResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM order_process WHERE order_id = #{orderId}
+    </select>
+
+    <select id="countByRepairmanId" resultType="int">
+        SELECT COUNT(1) FROM order_process WHERE repairman_id = #{repairmanId}
+    </select>
+
+    <update id="clearAssignerByUserId">
+        UPDATE order_process SET assigner_id = NULL WHERE assigner_id = #{userId}
+    </update>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.OrderEvaluationMapper">
+
+    <resultMap id="OrderEvaluationResultMap" type="com.example.hello.entity.OrderEvaluation">
+        <id column="id" property="id"/>
+        <result column="order_id" property="orderId"/>
+        <result column="owner_id" property="ownerId"/>
+        <result column="repairman_id" property="repairmanId"/>
+        <result column="score" property="score"/>
+        <result column="content" property="content"/>
+        <result column="images" property="images"/>
+        <result column="anonymous" property="anonymous"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.hello.entity.OrderEvaluation" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO order_evaluation (order_id, owner_id, repairman_id, score, content, images, anonymous, create_time)
+        VALUES (#{orderId}, #{ownerId}, #{repairmanId}, #{score}, #{content}, #{images}, #{anonymous}, #{createTime})
+    </insert>
+
+    <select id="selectByOrderId" resultMap="OrderEvaluationResultMap">
+        SELECT id, order_id, owner_id, repairman_id, score, content, images, anonymous, create_time
+        FROM order_evaluation WHERE order_id = #{orderId}
+    </select>
+</mapper>

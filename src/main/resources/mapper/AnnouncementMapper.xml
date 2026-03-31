@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.AnnouncementMapper">
+
+    <resultMap id="AnnouncementResultMap" type="com.example.hello.entity.Announcement">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="publisher_id" property="publisherId"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="status" property="status"/>
+        <result column="top_status" property="topStatus"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, title, content, publisher_id, publish_time, expire_time,
+        status, top_status, view_count, create_time
+    </sql>
+
+    <select id="selectByCondition" resultMap="AnnouncementResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM announcement
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+        ORDER BY top_status DESC, publish_time DESC
+    </select>
+
+    <select id="selectLatest" resultMap="AnnouncementResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM announcement
+        WHERE status = 1
+        ORDER BY top_status DESC, publish_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectById" resultMap="AnnouncementResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM announcement
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.hello.entity.Announcement" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO announcement
+        (title, content, publisher_id, publish_time, expire_time, status, top_status, view_count, create_time)
+        VALUES
+        (#{title}, #{content}, #{publisherId}, #{publishTime}, #{expireTime}, #{status}, #{topStatus}, #{viewCount}, #{createTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.hello.entity.Announcement">
+        UPDATE announcement
+        SET title = #{title},
+            content = #{content},
+            publish_time = #{publishTime},
+            expire_time = #{expireTime},
+            status = #{status},
+            top_status = #{topStatus}
+        WHERE id = #{id}
+    </update>
+</mapper>

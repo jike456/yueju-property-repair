@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.RepairmanMapper">
+
+    <resultMap id="RepairmanResultMap" type="com.example.hello.entity.Repairman">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="skill_type" property="skillType"/>
+        <result column="work_years" property="workYears"/>
+        <result column="work_status" property="workStatus"/>
+        <result column="score" property="score"/>
+        <result column="total_orders" property="totalOrders"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.hello.entity.Repairman" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO repairman
+        (user_id, skill_type, work_years, work_status, score, total_orders, create_time)
+        VALUES
+        (#{userId}, #{skillType}, #{workYears}, #{workStatus}, #{score}, #{totalOrders}, #{createTime})
+    </insert>
+
+    <select id="selectByUserId" parameterType="long" resultMap="RepairmanResultMap">
+        SELECT id, user_id, skill_type, work_years, work_status, score, total_orders, create_time
+        FROM repairman
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="RepairmanResultMap">
+        SELECT id, user_id, skill_type, work_years, work_status, score, total_orders, create_time
+        FROM repairman
+        WHERE id = #{id}
+    </select>
+
+    <delete id="deleteByUserId">
+        DELETE FROM repairman WHERE user_id = #{userId}
+    </delete>
+</mapper>
+

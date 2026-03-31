@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.RepairOrderMapper">
+
+    <resultMap id="RepairOrderResultMap" type="com.example.hello.entity.RepairOrder">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="owner_id" property="ownerId"/>
+        <result column="fault_type_id" property="faultTypeId"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="images" property="images"/>
+        <result column="appointment_time" property="appointmentTime"/>
+        <result column="address_detail" property="addressDetail"/>
+        <result column="status" property="status"/>
+        <result column="priority" property="priority"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, order_no, owner_id, fault_type_id, title, description, images,
+        appointment_time, address_detail, status, priority, create_time, update_time
+    </sql>
+
+    <insert id="insert" parameterType="com.example.hello.entity.RepairOrder" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO repair_order
+        (order_no, owner_id, fault_type_id, title, description, images, appointment_time,
+         address_detail, status, priority, create_time, update_time)
+        VALUES
+        (#{orderNo}, #{ownerId}, #{faultTypeId}, #{title}, #{description}, #{images}, #{appointmentTime},
+         #{addressDetail}, #{status}, #{priority}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.hello.entity.RepairOrder">
+        UPDATE repair_order
+        <set>
+            <if test="status != null">status = #{status},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="RepairOrderResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM repair_order WHERE id = #{id}
+    </select>
+
+    <select id="selectByOrderNo" resultMap="RepairOrderResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM repair_order WHERE order_no = #{orderNo}
+    </select>
+
+    <select id="selectByOwnerId" resultMap="RepairOrderResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM repair_order
+        WHERE owner_id = #{ownerId}
+        <if test="status != null">AND status = #{status}</if>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByCondition" resultMap="RepairOrderResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM repair_order
+        <where>
+            <if test="status != null">AND status = #{status}</if>
+            <if test="priority != null">AND priority = #{priority}</if>
+            <if test="ownerId != null">AND owner_id = #{ownerId}</if>
+            <if test="repairmanId != null">
+                AND id IN (SELECT order_id FROM order_process WHERE repairman_id = #{repairmanId})
+            </if>
+            <if test="startTime != null">AND create_time &gt;= #{startTime}</if>
+            <if test="endTime != null">AND create_time &lt;= #{endTime}</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectMaxOrderNoByDate" resultType="string">
+        SELECT MAX(order_no) FROM repair_order WHERE order_no LIKE CONCAT(#{datePrefix}, '%')
+    </select>
+
+    <select id="countByOwnerId" resultType="int">
+        SELECT COUNT(1) FROM repair_order WHERE owner_id = #{ownerId}
+    </select>
+</mapper>

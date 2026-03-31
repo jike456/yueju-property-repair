@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hello.mapper.StatisticsMapper">
+
+    <select id="selectFaultTypeDistribution" resultType="com.example.hello.dto.FaultTypeDistributionItem">
+        SELECT ft.type_name AS typeName, COUNT(ro.id) AS count
+        FROM repair_order ro
+        JOIN fault_type ft ON ro.fault_type_id = ft.id
+        WHERE ro.status NOT IN (5, 6)
+        <if test="startDate != null and startDate != ''">
+            AND DATE(ro.create_time) &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DATE(ro.create_time) &lt;= #{endDate}
+        </if>
+        GROUP BY ro.fault_type_id, ft.type_name
+        ORDER BY count DESC
+    </select>
+
+    <select id="selectOrderCompletionTrend" resultType="com.example.hello.dto.OrderCompletionTrendItem">
+        SELECT
+        <choose>
+            <when test="interval != null and interval == 'week'">
+                DATE_FORMAT(DATE_SUB(ro.create_time, INTERVAL WEEKDAY(ro.create_time) DAY), '%Y-%m-%d') AS date
+            </when>
+            <when test="interval != null and interval == 'month'">
+                DATE_FORMAT(ro.create_time, '%Y-%m-01') AS date
+            </when>
+            <otherwise>
+                DATE(ro.create_time) AS date
+            </otherwise>
+        </choose>
+        , COUNT(*) AS total
+        , SUM(CASE WHEN ro.status = 4 THEN 1 ELSE 0 END) AS completed
+        FROM repair_order ro
+        WHERE ro.create_time &gt;= CONCAT(#{startDate}, ' 00:00:00')
+          AND ro.create_time &lt;= CONCAT(#{endDate}, ' 23:59:59')
+        GROUP BY
+        <choose>
+            <when test="interval != null and interval == 'week'">
+                DATE_SUB(ro.create_time, INTERVAL WEEKDAY(ro.create_time) DAY)
+            </when>
+            <when test="interval != null and interval == 'month'">
+                DATE_FORMAT(ro.create_time, '%Y-%m')
+            </when>
+            <otherwise>
+                DATE(ro.create_time)
+            </otherwise>
+        </choose>
+        ORDER BY date ASC
+    </select>
+
+    <select id="selectRepairmanRanking" resultType="com.example.hello.dto.RepairmanRankingItem">
+        SELECT r.id AS repairmanId, u.real_name AS repairmanName,
+               COUNT(ro.id) AS completedOrders,
+               ROUND(AVG(oe.score), 2) AS avgScore
+        FROM order_process op
+        JOIN repairman r ON op.repairman_id = r.id
+        JOIN user u ON r.user_id = u.id
+        JOIN repair_order ro ON op.order_id = ro.id AND ro.status = 4
+        LEFT JOIN order_evaluation oe ON ro.id = oe.order_id
+        <where>
+            <if test="startDate != null and startDate != ''">
+                AND DATE(ro.create_time) &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND DATE(ro.create_time) &lt;= #{endDate}
+            </if>
+        </where>
+        GROUP BY r.id, u.real_name
+        ORDER BY completedOrders DESC, avgScore DESC
+        <if test="limit != null and limit > 0">
+            LIMIT #{limit}
+        </if>
+    </select>
+</mapper>
